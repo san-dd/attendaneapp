@@ -1,0 +1,28 @@
+{% extends 'base.html'%} {% block head %} {% endblock %} {% block body %}
+<title>Search user from image</title>
+<h2>Select an image to upload and display</h2>
+<p>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+</p>
+{% if userdata %}{% for i in userdata %}
+<div>
+    <img alt="HTML5 Icon" width="256" height="256" src="{{ url_for('display_image', filename=i) }}">
+</div>
+{% endfor %} {% endif %}
+<form method="post" action="/searchuser" enctype="multipart/form-data">
+    <dl>
+        <p>
+            <input type="file" name="file1" autocomplete="off" required>
+        </p>
+    </dl>
+    <p>
+        <input type="submit" value="Submit">
+    </p>
+</form>
+<button onclick="location.href = './userlist';" id="myButton" class="float-left submit-button">Home</button> {% endblock %}

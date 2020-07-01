@@ -1,0 +1,38 @@
+{% extends 'base.html'%} {% block head %} {% endblock %} {% block body %}
+<title>Python Flask Image Upload and Display Example</title>
+<h2>Select an image to upload and display</h2>
+<p>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+</p>
+{% if filename %} {% for i in filename %}
+<div>
+    <img src="{{ url_for('display_image', filename=i) }}">
+</div>
+{% endfor %} {% endif %}
+<form method="post" action="/" enctype="multipart/form-data">
+    <dl>
+        <p>
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname"><br>
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname"><br>
+            <label for="emailid">email id:</label><br>
+            <input type="text" id="emailid" name="emailid"><br>
+            <label for="mobno">mobile number</label><br>
+            <input type="text" id="mobno" name="mobno"><br>
+            <input type="file" name="file1" autocomplete="off" required>
+            <input type="file" name="file2" autocomplete="off" required>
+            <input type="file" name="file3" autocomplete="off" required>
+        </p>
+    </dl>
+    <p>
+        <input type="submit" value="Submit">
+    </p>
+</form>
+<button onclick="location.href = './userlist';" id="myButton" class="float-left submit-button">Home</button> {% endblock %}

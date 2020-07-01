@@ -1,0 +1,28 @@
+{% extends 'base.html'%} {% block head %}
+<title>abccc</title> {% endblock %} {% block body %}
+<title>Python Flask Image Upload and Display Example</title>
+<h2>userdetails</h2>
+{% if userlist %}
+<table>
+    <tr>
+        <th>first name</th>
+        <th>last name</th>
+        <th>emaiid</th>
+        <th>mobileno</th>
+        <th>images1</th>
+        <th>images2</th>
+        <th>images3</th>
+    </tr>
+    {% for user in userlist %}
+    <tr>
+        <td>{{user.fname}}</td>
+        <td>{{user.lname}}</td>
+        <td>{{user.emailid}}</td>
+        <td>{{user.mobno}}</td>
+        {% for i in user.files %}
+        <td><img alt="HTML5 Icon" width="128" height="128" src="{{ url_for('display_image', filename=i) }}"> </td>{% endfor %}
+    </tr>
+    {% endfor %}
+</table> {%else %}
+<h2>usernot found</h2>
+{% endif %} {% endblock %}
