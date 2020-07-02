@@ -1,5 +1,4 @@
 {% extends 'base.html'%} {% block head %} {% endblock %} {% block body %}
-<title>Python Flask Image Upload and Display Example</title>
 <h2>Select an image to upload and display</h2>
 <p>
     {% with messages = get_flashed_messages() %} {% if messages %}
@@ -12,10 +11,10 @@
 </p>
 {% if filename %} {% for i in filename %}
 <div>
-    <img src="{{ url_for('display_image', filename=i) }}">
+    <img alt="HTML5 Icon" width="256" height="256" src="{{ url_for('display_image', filename=i) }}" alt>
 </div>
 {% endfor %} {% endif %}
-<form method="post" action="/" enctype="multipart/form-data">
+<form method="post" action="/adduser" enctype="multipart/form-data">
     <dl>
         <p>
             <label for="fname">First name:</label><br>
@@ -35,4 +34,6 @@
         <input type="submit" value="Submit">
     </p>
 </form>
-<button onclick="location.href = './userlist';" id="myButton" class="float-left submit-button">Home</button> {% endblock %}
+<button onclick="location.href = './';" id="myButton" class="float-left submit-button">Search user</button>
+<button onclick="location.href = './userlist';" id="myButton" class="float-left submit-button">User List</button>
+<button onclick="location.href = './modelupdate';" id="myButton" class="float-left submit-button">Reload model</button> {% endblock %}

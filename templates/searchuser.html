@@ -1,6 +1,5 @@
 {% extends 'base.html'%} {% block head %} {% endblock %} {% block body %}
-<title>Search user from image</title>
-<h2>Select an image to upload and display</h2>
+<h2>Search user from image</h2>
 <p>
     {% with messages = get_flashed_messages() %} {% if messages %}
     <ul class=flashes>
@@ -10,12 +9,33 @@
     </ul>
     {% endif %} {% endwith %}
 </p>
-{% if userdata %}{% for i in userdata %}
-<div>
-    <img alt="HTML5 Icon" width="256" height="256" src="{{ url_for('display_image', filename=i) }}">
-</div>
-{% endfor %} {% endif %}
-<form method="post" action="/searchuser" enctype="multipart/form-data">
+{% if userlist %} {% if userlist | length>0 %}
+<h2>userdetails</h2>
+<table>
+    <tr>
+        <th>first name</th>
+        <th>last name</th>
+        <th>emaiid</th>
+        <th>mobileno</th>
+        <th>images1</th>
+        <th>images2</th>
+        <th>images3</th>
+    </tr>
+    {% for user in userlist %}
+    <tr>
+        <td>{{user.fname}}</td>
+        <td>{{user.lname}}</td>
+        <td>{{user.emailid}}</td>
+        <td>{{user.mobno}}</td>
+        {% for i in user.files %}
+        <td><img alt="HTML5 Icon" width="128" height="128" src="{{ url_for('display_image', filename=i) }}"> </td>{% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h2>usernot found</h2>
+{% endif %} {% endif %}
+<form method="post" action="/" enctype="multipart/form-data">
     <dl>
         <p>
             <input type="file" name="file1" autocomplete="off" required>
@@ -25,4 +45,5 @@
         <input type="submit" value="Submit">
     </p>
 </form>
-<button onclick="location.href = './userlist';" id="myButton" class="float-left submit-button">Home</button> {% endblock %}
+<button onclick="location.href = './adduser';" id="myButton" class="float-left submit-button">Add User</button>
+<button onclick="location.href = './userlist';" id="myButton" class="float-left submit-button">User List</button> {% endblock %}

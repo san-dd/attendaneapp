@@ -7,9 +7,9 @@ from datetime import datetime
 # from PIL import ImageGrab
  
 path = 'C:/Users/santo/attendaneapp/static/uploads'
-temppath='C:/Users/santo/attendaneapp/static/uploads'
+temppath='C:/Users/santo/AppData/Local/Temp'
 
-#path = './uploads'
+
 images = []
 classNames = []
 myList = os.listdir(path)
@@ -88,5 +88,7 @@ def searchImages(file):
     results = face_recognition.compare_faces(encodeListKnown,encodeTest)
     faceDis = face_recognition.face_distance(encodeListKnown,encodeTest)
     findfaces=[myList[i] for i in range(len(myList)) if results[i]==True]
+    userclass=[i.split("_")[0] for i in findfaces]
     print(results,faceDis)
-    return findfaces
+    print("find class",userclass)
+    return {"success":True, "userclass":set(userclass)}

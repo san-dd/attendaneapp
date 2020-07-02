@@ -1,6 +1,15 @@
 {% extends 'base.html'%} {% block head %}
 <title>abccc</title> {% endblock %} {% block body %}
 <title>Python Flask Image Upload and Display Example</title>
+<p>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+</p>
 <h2>userdetails</h2>
 {% if userlist %}
 <table>
@@ -12,6 +21,7 @@
         <th>images1</th>
         <th>images2</th>
         <th>images3</th>
+        <th>action</th>
     </tr>
     {% for user in userlist %}
     <tr>
@@ -21,8 +31,13 @@
         <td>{{user.mobno}}</td>
         {% for i in user.files %}
         <td><img alt="HTML5 Icon" width="128" height="128" src="{{ url_for('display_image', filename=i) }}"> </td>{% endfor %}
+        <td><button onclick="location.href = './deleteuser/{{user.mobno}}';" id="myButton" class="float-left submit-button">Delete</button></td>
     </tr>
     {% endfor %}
-</table> {%else %}
-<h2>usernot found</h2>
-{% endif %} {% endblock %}
+</table>
+</br>
+{%else %}
+<h2>usernot found</h2> {% endif %}
+
+<button onclick="location.href = './';" id="myButton" class="float-left submit-button">Search user</button>
+<button onclick="location.href = './adduser';" id="myButton" class="float-left submit-button">Add user</button> {% endblock %}
