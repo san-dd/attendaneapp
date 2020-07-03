@@ -11,44 +11,58 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-#indexpage
-@app.route('/adduser')
-def upload_form():
-	return render_template('upload.html')
+
 #save user details
-@app.route('/adduser', methods=['POST'])
+@app.route('/adduser', methods=['POST','GET'])
 def upload_image():
-	if 'file1' not in request.files and 'file2' not in request.files and 'file3' not in request.files:
-		flash('No file part')
-		return redirect(request.url)
-
-	file1,file2,file3 = request.files['file1'],request.files['file2'],request.files['file3']
-	if file1.filename == '' and file2.filename == '' and file3.filename == '':
-		flash('No image selected for uploading')
-		return redirect(request.url)
-
-	if file1 and allowed_file(file1.filename) and file2 and allowed_file(file2.filename) and file3 and allowed_file(file3.filename):
-		filename1 = secure_filename(request.form['mobno']+"_1."+file1.filename.split(".")[-1])
-		filename2 = secure_filename(request.form['mobno']+"_2."+file1.filename.split(".")[-1])
-		filename3 = secure_filename(request.form['mobno']+"_3."+file1.filename.split(".")[-1])
-  
-		file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
-		file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename2))
-		file3.save(os.path.join(app.config['UPLOAD_FOLDER'], filename3))
-  
-		data={}
-		data["fname"]=request.form['fname']
-		data["lname"]=request.form['lname']
-		data["emailid"]=request.form['emailid']
-		data["mobno"]=request.form['mobno']
-		data["files"]=[filename1,filename2,filename3]
-
-		saveuser.saveuser(data)
-		flash('Image successfully uploaded and displayed')
-		return render_template('upload.html', filename=[filename1,filename2,filename3])
-	else:
-		flash('Allowed image types are -> png, jpg, jpeg, gif')
-		return redirect(request.url)
+    if request.method=="POST":
+        if ('file1' not in request.files and 'file2' not in request.files and 'file3' not in request.files) :
+            flash('No file part')
+            return redirect(request.url)
+        file1,file2,file3 = request.files['file1'],request.files['file2'],request.files['file3']
+        if file1.filename == '' and file2.filename == '' and file3.filename == '':
+            flash('No image selected for uploading')
+            return redirect(request.url)
+        
+        if file1 and allowed_file(file1.filename) and file2 and allowed_file(file2.filename) and file3 and allowed_file(file3.filename):
+            filename1 = secure_filename(request.form['mobno']+"_1."+file1.filename.split(".")[-1])
+            filename2 = secure_filename(request.form['mobno']+"_2."+file1.filename.split(".")[-1])
+            filename3 = secure_filename(request.form['mobno']+"_3."+file1.filename.split(".")[-1])
+            
+            file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
+            file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename2))
+            file3.save(os.path.join(app.config['UPLOAD_FOLDER'], filename3))
+            
+            data={}
+            data["fname"]=request.form['fname']
+            data["lname"]=request.form['lname']
+            data["emailid"]=request.form['emailid']
+            data["mobno"]=request.form['mobno']
+            data["files"]=[filename1,filename2,filename3]
+            
+            response=searchuser.InsertEncoding(data["files"])
+            if response["success"]:
+                saveuser.saveuser(data)
+                flash('Image successfully uploaded and displayed')
+                return render_template('upload.html', filename=[filename1,filename2,filename3])
+            else:
+                fileList=[f'{searchuser.path}/{file}' for file in  data["files"]]
+                for file in fileList:
+                    try:
+                        os.remove(file)
+                    except OSError:
+                        print("oserror")
+                    finally:
+                        pass
+                flash("user face not found")
+                return render_template('upload.html')
+                
+        else:
+            flash('Allowed image types are -> png, jpg, jpeg, gif')
+            return redirect(request.url)
+    else:
+        return render_template('upload.html')
+            
 
 #static image display from folder uploads
 @app.route('/display/<filename>')
@@ -92,7 +106,7 @@ def index():
                     flash("mongodb error")
                     return render_template('searchuser.html')
             else:
-                flash('error in recognition module')
+                flash('Face not found')
                 return render_template('searchuser.html')
         else:
             flash('Allowed image types are -> png, jpg, jpeg, gif')
@@ -108,6 +122,7 @@ def delete(mobno):
         fileList=glob.glob(f'{searchuser.path}/{mobno}*', recursive=True)
         print(f'{searchuser.path}/{mobno}*')
         print(fileList)
+        searchuser.deleteEncoding([i.split("\\")[-1] for i in fileList])
         for file in fileList:
             try:
                 os.remove(file)

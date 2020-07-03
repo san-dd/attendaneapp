@@ -79,16 +79,47 @@ while True:
     cv2.imshow('Webcam',img)
     cv2.waitKey(1)'''
 def searchImages(file):
-    imgTest = face_recognition.load_image_file(f'{temppath}/{file}')
-    imgTest = cv2.cvtColor(imgTest,cv2.COLOR_BGR2RGB)
+    try:
+        print("filename",file)
+        imgTest = face_recognition.load_image_file(f'{temppath}/{file}')
+        imgTest = cv2.cvtColor(imgTest,cv2.COLOR_BGR2RGB)
+        print(f'{temppath}/{file}')
+        faceLocTest = face_recognition.face_locations(imgTest)[0]
+        encodeTest = face_recognition.face_encodings(imgTest)[0]
 
-    faceLocTest = face_recognition.face_locations(imgTest)[0]
-    encodeTest = face_recognition.face_encodings(imgTest)[0]
-
-    results = face_recognition.compare_faces(encodeListKnown,encodeTest)
-    faceDis = face_recognition.face_distance(encodeListKnown,encodeTest)
-    findfaces=[myList[i] for i in range(len(myList)) if results[i]==True]
-    userclass=[i.split("_")[0] for i in findfaces]
-    print(results,faceDis)
-    print("find class",userclass)
-    return {"success":True, "userclass":set(userclass)}
+        results = face_recognition.compare_faces(encodeListKnown,encodeTest)
+        faceDis = face_recognition.face_distance(encodeListKnown,encodeTest)
+        findfaces=[myList[i] for i in range(len(myList)) if results[i]==True]
+        userclass=[i.split("_")[0] for i in findfaces]
+        print(results,faceDis)
+        print("find class",userclass)
+        return {"success":True, "userclass":set(userclass)}
+    except:
+        return {"success":False}
+#delete incoding from 
+def deleteEncoding(imagelist):
+    for image in imagelist:
+        indexofimage=myList.index(image)
+        del(myList[indexofimage])
+        del(classNames[indexofimage])
+        del(encodeListKnown[indexofimage])
+        
+#inser encoding to current model to avoid refresh model
+def InsertEncoding(imagelist):
+    try:
+        newimages=[]
+        for cl in imagelist:
+            curImg = cv2.imread(f'{path}/{cl}')
+            newimages.append(curImg)
+            myList.append(cl)
+            classNames.append(os.path.splitext(cl)[0])
+            
+        for img in newimages:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            encode = face_recognition.face_encodings(img)[0]
+            encodeListKnown.append(encode)
+        return {"success":True}
+    except:
+        return {"success":False}
+        
+    
