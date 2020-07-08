@@ -122,4 +122,14 @@ def InsertEncoding(imagelist):
     except:
         return {"success":False}
         
-    
+
+#conver image to base 64
+# import base64
+# from PIL import Image
+# from io import BytesIO
+
+# with open("encoded-20200707194720.txt", "rb") as image_file:
+#     data = image_file.read()#base64.b64encode(image_file.read())
+
+# im = Image.open(BytesIO(base64.b64decode(data)))
+# im.save('image1.png', 'PNG')
